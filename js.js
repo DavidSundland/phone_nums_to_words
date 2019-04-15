@@ -25,12 +25,15 @@ function getPhoneNumber(event) {
     document.getElementById("numberInput").getElementsByTagName("input")[0].value = "";
 }
 
+// for speed, MAY consider loading the dictionary as page loads rather than after phone number entered
+// MAY add dictionaries in future - slang, vulgar words, proper names...
 function loadDictionary(phoneNumber) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            const dictionary = this.responseText.split(',');
-            buildWordList(phoneNumber, dictionary);
+            const dictionary = this.responseText.split(',').sort(); // word list may be unsorted
+            const words = splitDictionary(dictionary);
+            const possibles = createPossibilities(phoneNumber);
         }
     };
     xhttp.open("GET", "words.txt", true);
@@ -38,31 +41,32 @@ function loadDictionary(phoneNumber) {
 }
 
 
-function buildWordList(phoneNumber, dictionary) {
+function splitDictionary(dictionary) {
     //    seed list of words with empty array for 0, letters of alphabet for 1, and empty arrays for 2 through 10
     const words = [[],['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],[],[],[],[],[],[],[],[],[]];
+    for (let word of dictionary) {
+        if (word.length > 1 && word.length < 11) { // for now, only test against words of 10 or fewer letters
+            words[word.length].push(word.toUpperCase());
+        }
+    }
+    return words;
 }
 
 
+function createPossibilities(phoneNumber) {
+    let possibles = [""],
+        letters = [["0"],["1"],["A","B","C"],["D","E","F"],["G","H","I"],["J","K","L"],["M","N","O"],["P","Q","R","S"],["T","U","V"],["W","X","Y","Z"]];
+    for (let digit of phoneNumber) {
+        let newPossibilities = [];
+        for (let possible of possibles) {
+            for (let onelet of letters[parseInt(digit)]) {
+                newPossibilities.push(possible+onelet);
+            }
+        }
+        possibles = [...newPossibilities];
+    }
+    return possibles;
+}
 
-//function handler() {
-//    if(this.status == 200 &&
-//       this.responseXML != null) {
-//        // success!
-//        alert("Success!");
-////        processData(this.responseXML.getElementById('test').textContent);
-//    } else {
-//        alert("Failure");
-//        // something went wrong
-//    }
-//}
-//
-//let client = new XMLHttpRequest();
-//client.onload = handler;
-//client.open("GET", "words.txt");
-//client.send();
-
-
-//dawords = readTextFile("words.txt");
-//console.log(dawords);
 listen();
+
