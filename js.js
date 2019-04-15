@@ -3,14 +3,21 @@
 //Some numbers will have multiple results, others will have none.  Since no letters correspond to the 0 or 1 keys, those numbers can't be converted to letters.
 
 function listen() {
-//    alert('hi');
     document.getElementById("numberInput").addEventListener("submit", getPhoneNumber, false);
 }
 
 function getPhoneNumber(event) {
     event.preventDefault();
     let phoneNumber = document.getElementById("numberInput").getElementsByTagName("input")[0].value;
-    console.log(phoneNumber);
+    phoneNumber = phoneNumber.replace(/\D/g,'');
+    if (phoneNumber.length > 0) {
+        document.getElementById("putTextHere").innerHTML = `The numerals you entered were: ${phoneNumber}`;
+    }
+    else {
+        document.getElementById("putTextHere").innerHTML = "The information which you entered did not contain any numerals";
+    }
+    document.getElementById("numberInput").getElementsByTagName("input")[0].value = "";
+    document.getElementById("numberInput").getElementsByTagName("input")[0].placeholder = phoneNumber;
 }
 
 listen();
