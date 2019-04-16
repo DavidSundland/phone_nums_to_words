@@ -31,9 +31,13 @@ function loadDictionary(phoneNumber) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-            const dictionary = this.responseText.split(',').sort(); // word list may be unsorted
+            const dictionary = this.responseText.split(',').sort(); // word list may be unsorted; search efficiency demands sorted list
             const words = splitDictionary(dictionary);
             const possibles = createPossibilities(phoneNumber);
+            let threeKeys = phoneNumber.match(/[234568]/g) ? phoneNumber.match(/[234568]/g).length : 1;
+            let fourKeys = phoneNumber.match(/[79]/g) ? phoneNumber.match(/[79]/g).length : 1;
+            let combinations = 3**threeKeys*4**fourKeys;
+            document.getElementById("putTextHere").innerHTML += `<br>Checking ${combinations} possible combinations...`;
         }
     };
     xhttp.open("GET", "words.txt", true);
