@@ -120,7 +120,7 @@ function sortedFind(word, sortedList) {
 
 function compileCombinations(matches,phoneNumber) {
     for (let match of matches) {
-        FULLLIST.add((`${phoneNumber.substring(0,match[0])}-${match[1]}-${phoneNumber.substring(match[0]+match[1].length)}`));
+        FULLLIST.add((`${phoneNumber.substring(0,match[0])}-${match[1]}-${phoneNumber.substring(match[0]+match[1].length)}`).replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-'));
         addToWord(match, matches, phoneNumber);
     }
 }
@@ -129,8 +129,8 @@ function addToWord(item, matches, phoneNumber) {
     if (item[0] + item[1].length <= phoneNumber.length - 1) {
         for (let match of matches) {
             if ((match[0] >= item[0] + item[1].length) && (match[0] + match[1].length <= phoneNumber.length)) {
-                FULLLIST.add((`${phoneNumber.substring(0,item[0])}-${item[1]}-${phoneNumber.substring(item[0]+item[1].length,match[0])}-${match[1]}-${phoneNumber.substring(match[0]+match[1].length)}`));
-                let recursiveCheck = [item[0],(`${item[1]}-${phoneNumber.substring(item[0]+item[1].length),match[0]}-${match[1]}`)];
+                FULLLIST.add((`${phoneNumber.substring(0,item[0])}-${item[1]}-${phoneNumber.substring(item[0]+item[1].length,match[0])}-${match[1]}-${phoneNumber.substring(match[0]+match[1].length)}`).replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-'));
+                let recursiveCheck = [item[0],(`${item[1]}-${phoneNumber.substring(item[0]+item[1].length),match[0]}-${match[1]}`).replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-')];
                 addToWord(recursiveCheck, matches, phoneNumber);
             }
         }
