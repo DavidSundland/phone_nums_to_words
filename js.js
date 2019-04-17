@@ -38,6 +38,8 @@ function loadDictionary(phoneNumber) {
             let fourKeys = phoneNumber.match(/[79]/g) ? phoneNumber.match(/[79]/g).length : 1;
             let combinations = 3**threeKeys*4**fourKeys;
             document.getElementById("putTextHere").innerHTML += `<br>Checking ${combinations} possible combinations...`;
+            let matches = findWordMatches(phoneNumber,possibles,words);
+            console.log(matches);
         }
     };
     xhttp.open("GET", "words.txt", true);
@@ -71,6 +73,44 @@ function createPossibilities(phoneNumber) {
     }
     return possibles;
 }
+
+
+function findWordMatches(phoneNumber,possibles,words) {
+//    step through each possible combination, starting with longest words
+    let matches = new Set();  // ********** NOTE!!!   Need alternative to set, as set is trying to match memory location, not content of array (yielding duplicates)
+    for (let shortener = 0; shortener < phoneNumber.length - 1; shortener++) {
+        for (let possible of possibles) {
+            for (let pointer = 0; pointer <= shortener; pointer++) {
+                wordLen = possible.length-shortener;
+                if (sortedFind(possible.substring(pointer, wordLen+pointer), words[wordLen])) {
+                    matches.add([pointer,wordLen+pointer-1,possible.substring(pointer, wordLen+pointer)])
+                }
+            }
+        }
+    }
+    return matches;
+}
+
+
+function sortedFind(word, sortedList) {
+    let startPoint = 0;
+    let endPoint = sortedList.length;
+    while (startPoint < endPoint) {
+        let midPoint = Math.floor((endPoint-startPoint)/2) + startPoint;
+        if (sortedList[midPoint] === word) {
+            return true;
+        }
+        if (word > sortedList[midPoint]) {
+            startPoint = midPoint + 1;
+        }
+        else {
+            endPoint = midPoint;
+        }
+    }
+    return false;
+}
+
+
 
 listen();
 
