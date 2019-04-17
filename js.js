@@ -2,6 +2,8 @@
 //Computation time may be the biggest challenge - if both numbers AND the corresponding letters are checked, a 10-digit phone number could result in over 1 million combinations, each to be checked against a dictionary of over 50,000 words...
 //Some numbers will have multiple results, others will have none.  Since no letters correspond to the 0 or 1 keys, those numbers can't be converted to letters.
 
+const FULLLIST = new Set();
+
 function listen() {
     document.getElementById("numberInput").addEventListener("submit", getPhoneNumber, false);
 }
@@ -26,7 +28,7 @@ function getPhoneNumber(event) {
 }
 
 // for speed, MAY consider loading the dictionary as page loads rather than after phone number entered
-// MAY add dictionaries in future - slang, vulgar words, proper names...
+// MAY add more dictionaries in future - slang, vulgar words, proper names...
 function loadDictionary(phoneNumber) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -39,7 +41,8 @@ function loadDictionary(phoneNumber) {
             let combinations = 3**threeKeys*4**fourKeys;
             document.getElementById("putTextHere").innerHTML += `<br>Checking ${combinations} possible combinations...`;
             let matches = findWordMatches(phoneNumber,possibles,words);
-            console.log(matches);
+            compileCombinations(matches,phoneNumber);
+            console.log(FULLLIST);
         }
     };
     xhttp.open("GET", "words.txt", true);
@@ -91,7 +94,7 @@ function findWordMatches(phoneNumber,possibles,words) {
     }
     let returnArray = [];
     for (let match of matches) {
-        returnArray.push([match.match(/[0-9]+/)[0],match.match(/[A-Z]+/)[0]]);
+        returnArray.push([Number(match.match(/[0-9]+/)[0]),match.match(/[A-Z]+/)[0]]);
     }
     return returnArray;
 }
@@ -115,7 +118,24 @@ function sortedFind(word, sortedList) {
     return false;
 }
 
+function compileCombinations(matches,phoneNumber) {
+    for (let match of matches) {
+        FULLLIST.add((`${phoneNumber.substring(0,match[0])}-${match[1]}-${phoneNumber.substring(match[0]+match[1].length)}`));
+        addToWord(match, matches, phoneNumber);
+    }
+}
 
+function addToWord(item, matches, phoneNumber) {
+    if (item[0] + item[1].length <= phoneNumber.length - 1) {
+        for (let match of matches) {
+            if ((match[0] >= item[0] + item[1].length) && (match[0] + match[1].length <= phoneNumber.length)) {
+                FULLLIST.add((`${phoneNumber.substring(0,item[0])}-${item[1]}-${phoneNumber.substring(item[0]+item[1].length,match[0])}-${match[1]}-${phoneNumber.substring(match[0]+match[1].length)}`));
+                let recursiveCheck = [item[0],(`${item[1]}-${phoneNumber.substring(item[0]+item[1].length),match[0]}-${match[1]}`)];
+                addToWord(recursiveCheck, matches, phoneNumber);
+            }
+        }
+    }
+}
 
 listen();
 
