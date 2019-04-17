@@ -77,18 +77,23 @@ function createPossibilities(phoneNumber) {
 
 function findWordMatches(phoneNumber,possibles,words) {
 //    step through each possible combination, starting with longest words
-    let matches = new Set();  // ********** NOTE!!!   Need alternative to set, as set is trying to match memory location, not content of array (yielding duplicates)
+    let matches = new Set();
     for (let shortener = 0; shortener < phoneNumber.length - 1; shortener++) {
         for (let possible of possibles) {
             for (let pointer = 0; pointer <= shortener; pointer++) {
                 wordLen = possible.length-shortener;
                 if (sortedFind(possible.substring(pointer, wordLen+pointer), words[wordLen])) {
-                    matches.add([pointer,wordLen+pointer-1,possible.substring(pointer, wordLen+pointer)])
+                    // concatenating pointer to word (instead of creating array) so that Set can be used to eliminate duplicates
+                    matches.add(pointer + possible.substring(pointer, wordLen+pointer));
                 }
             }
         }
     }
-    return matches;
+    let returnArray = [];
+    for (let match of matches) {
+        returnArray.push([match.match(/[0-9]+/)[0],match.match(/[A-Z]+/)[0]]);
+    }
+    return returnArray;
 }
 
 
