@@ -42,9 +42,11 @@ function loadDictionary(phoneNumber) {
             document.getElementById("putTextHere").innerHTML += `<br>Checking ${combinations} possible combinations...`;
             let matches = findWordMatches(phoneNumber,possibles,words);
             compileCombinations(matches,phoneNumber);
-            console.log(FULLLIST);
             let sortedList = sortAlpha();
+            console.log(sortedList);
             sortedList = sortByFewestDashes(sortedList);
+            console.log(sortedList);
+            sortedList = sortByNumberOfLetters(sortedList);
             console.log(sortedList);
         }
     };
@@ -159,17 +161,33 @@ function sortByFewestDashes(sortedList) {
             if (dashLength > itemDashLength) {
                 found = true;
                 secondSort = secondSort.slice(0,x).concat(item).concat(secondSort.slice(x));
-                console.log('about to break, ',sortedList[x],dashLength,itemDashLength,secondSort)
                 break;
             }
         }
         if (!found) {
-            console.log('not found', dashLength, secondSort);
             secondSort.push(item);
-            console.log('not found', dashLength, secondSort);
         }
     }
     return secondSort;
+}
+
+function sortByNumberOfLetters(sortedList) {
+    let finalSort = [sortedList.pop()];
+    for (let item of sortedList) {
+        let letterLength = item.match(/[A-Z]/g).length,
+            found = false;
+        for (let x=0; x<finalSort.length; x++) {
+            if (letterLength > finalSort[x].match(/[A-Z]/g).length) {
+                found = true;
+                finalSort = finalSort.slice(0,x).concat(item).concat(finalSort.slice(x));
+                break;
+            }
+        }
+        if (!found) {
+            finalSort.push(item);
+        }
+    }
+    return finalSort;
 }
 
 listen();
