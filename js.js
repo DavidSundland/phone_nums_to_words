@@ -39,15 +39,15 @@ function loadDictionary(phoneNumber) {
             let threeKeys = phoneNumber.match(/[234568]/g) ? phoneNumber.match(/[234568]/g).length : 1;
             let fourKeys = phoneNumber.match(/[79]/g) ? phoneNumber.match(/[79]/g).length : 1;
             let combinations = 3**threeKeys*4**fourKeys;
-            document.getElementById("putTextHere").innerHTML += `<br>Checking ${combinations} possible combinations...`;
+            document.getElementById("putTextHere").innerHTML += `<br>Checking ${combinations} possible combinations...<br>`;
             let matches = findWordMatches(phoneNumber,possibles,words);
             compileCombinations(matches,phoneNumber);
-            let sortedList = sortAlpha();
-            console.log(sortedList);
-            sortedList = sortByFewestDashes(sortedList);
-            console.log(sortedList);
-            sortedList = sortByNumberOfLetters(sortedList);
-            console.log(sortedList);
+            let sortedList = FULLLIST.size > 0 ? tripleSort() : [];
+            let maxResults = 1000; // Make this user-defined?
+            document.getElementById("putTextHere").innerHTML += sortedList.length > 0 ? `<br>Your results:<br>` : `<br>We found no results.<br>`;
+            for (let oneResult of sortedList.slice(0,maxResults)) {
+                document.getElementById("putTextHere").innerHTML += `<nobr class="oneResult">${oneResult}</nobr> `;
+            }
         }
     };
     xhttp.open("GET", "words.txt", true);
@@ -123,6 +123,15 @@ function sortedFind(word, sortedList) {
     return false;
 }
 
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// !!!!!!!!!!!!!!?????????????????????
+//
+// 678967866 - "OR-TWOS-TOM" IS NOT WORKING PROERLY - NOT FINDING ALL COMBINATIONS!!!!!!!!!!!!
+//
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!                                                                 AARGH! ! ! ! !
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 function compileCombinations(matches,phoneNumber) {
     for (let match of matches) {
         FULLLIST.add((`${phoneNumber.substring(0,match[0])}-${match[1]}-${phoneNumber.substring(match[0]+match[1].length)}`).replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-'));
@@ -142,52 +151,31 @@ function addToWord(item, matches, phoneNumber) {
     }
 }
 
-function sortAlpha() {
-    let firstSort = [];
-    for (let item of FULLLIST) {
+// sort by (1) most letters found; (2) fewest dashes; (3) alphabetically
+// ??? REPLACING ALL 2s WITH A's AND ALL 4s WITH I's; DO I WANT TO DO THAT?  ADD RATHER THAN REPLACE?
+function tripleSort() {
+    let finalList = [...FULLLIST];
+    let returnSort = [finalList.pop().replace(/2/g,"-A-").replace(/4/g,"-I-").replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-')];
+    for (let item of finalList) {
         item = item.replace(/2/g,"-A-").replace(/4/g,"-I-").replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-');
-        firstSort.push(item);
-    }
-    return firstSort;
-}
-
-function sortByFewestDashes(sortedList) {
-    let secondSort = [sortedList.pop()];
-    for (let item of sortedList) {
         let dashLength = item.match(/\-/g) ? item.match(/\-/g).length : 0,
+            letterLength = item.match(/[A-Z]/g).length,
             found = false;
-        for (let x=0; x<secondSort.length; x++) {
-            let itemDashLength = secondSort[x].match(/\-/g) ? secondSort[x].match(/\-/g).length : 0
-            if (dashLength > itemDashLength) {
+        for (let x=0; x<returnSort.length; x++) {
+            let itemDashLength = returnSort[x].match(/\-/g) ? returnSort[x].match(/\-/g).length : 0;
+            if (letterLength > returnSort[x].match(/[A-Z]/g).length ||
+                (letterLength === returnSort[x].match(/[A-Z]/g).length && dashLength < itemDashLength) ||
+                (letterLength === returnSort[x].match(/[A-Z]/g).length && dashLength === itemDashLength && returnSort[x] > item)) {
                 found = true;
-                secondSort = secondSort.slice(0,x).concat(item).concat(secondSort.slice(x));
+                returnSort = returnSort.slice(0,x).concat(item).concat(returnSort.slice(x));
                 break;
             }
         }
         if (!found) {
-            secondSort.push(item);
+            returnSort.push(item);
         }
     }
-    return secondSort;
-}
-
-function sortByNumberOfLetters(sortedList) {
-    let finalSort = [sortedList.pop()];
-    for (let item of sortedList) {
-        let letterLength = item.match(/[A-Z]/g).length,
-            found = false;
-        for (let x=0; x<finalSort.length; x++) {
-            if (letterLength > finalSort[x].match(/[A-Z]/g).length) {
-                found = true;
-                finalSort = finalSort.slice(0,x).concat(item).concat(finalSort.slice(x));
-                break;
-            }
-        }
-        if (!found) {
-            finalSort.push(item);
-        }
-    }
-    return finalSort;
+    return returnSort;
 }
 
 listen();

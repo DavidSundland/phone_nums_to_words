@@ -1,0 +1,8 @@
+.oneResult {
+    padding: 3px 15px;
+    line-height: 1.5;
+}
+
+.oneResult:nth-child(odd) {
+    background-color: azure;
+}
