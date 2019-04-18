@@ -43,6 +43,9 @@ function loadDictionary(phoneNumber) {
             let matches = findWordMatches(phoneNumber,possibles,words);
             compileCombinations(matches,phoneNumber);
             console.log(FULLLIST);
+            let sortedList = sortAlpha();
+            sortedList = sortByFewestDashes(sortedList);
+            console.log(sortedList);
         }
     };
     xhttp.open("GET", "words.txt", true);
@@ -135,6 +138,38 @@ function addToWord(item, matches, phoneNumber) {
             }
         }
     }
+}
+
+function sortAlpha() {
+    let firstSort = [];
+    for (let item of FULLLIST) {
+        item = item.replace(/2/g,"-A-").replace(/4/g,"-I-").replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-');
+        firstSort.push(item);
+    }
+    return firstSort;
+}
+
+function sortByFewestDashes(sortedList) {
+    let secondSort = [sortedList.pop()];
+    for (let item of sortedList) {
+        let dashLength = item.match(/\-/g) ? item.match(/\-/g).length : 0,
+            found = false;
+        for (let x=0; x<secondSort.length; x++) {
+            let itemDashLength = secondSort[x].match(/\-/g) ? secondSort[x].match(/\-/g).length : 0
+            if (dashLength > itemDashLength) {
+                found = true;
+                secondSort = secondSort.slice(0,x).concat(item).concat(secondSort.slice(x));
+                console.log('about to break, ',sortedList[x],dashLength,itemDashLength,secondSort)
+                break;
+            }
+        }
+        if (!found) {
+            console.log('not found', dashLength, secondSort);
+            secondSort.push(item);
+            console.log('not found', dashLength, secondSort);
+        }
+    }
+    return secondSort;
 }
 
 listen();
