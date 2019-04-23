@@ -30,8 +30,10 @@ function getPhoneNumber(event) {
 // for speed, MAY consider loading the dictionary as page loads rather than after phone number entered
 // MAY add more dictionaries in future - slang, vulgar words, proper names...
 function loadDictionary(phoneNumber) {
+    console.log("in loadDictionary");
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
+        console.log("readyState:",this.readyState,"status:",this.status);
         if (this.readyState == 4 && this.status == 200) {
             const dictionary = this.responseText.split(',').sort(); // word list may be unsorted; search efficiency demands sorted list
             const words = splitDictionary(dictionary);
@@ -50,7 +52,8 @@ function loadDictionary(phoneNumber) {
             }
         }
     };
-    xhttp.open("GET", "words.txt", true);
+    xhttp.open("GET", "words.txt", true);  // BEWARE OF CORS ISSUES
+    console.log("about to send");
     xhttp.send();
 }
 
@@ -171,5 +174,8 @@ function tripleSort() {
     return returnSort;
 }
 
-listen();
+window.addEventListener('load', () => {
+    listen();
+})
+
 
