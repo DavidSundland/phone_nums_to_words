@@ -6,3 +6,17 @@
 .oneResult:nth-child(odd) {
     background-color: azure;
 }
+
+#loader {
+    /* animated gif to display when potentially slow functions are running */
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.5) url("phone_dial.gif") no-repeat center center fixed;
+    background-size: 300px 300px;
+    opacity: .7;
+    z-index: 301;
+}

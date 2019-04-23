@@ -30,10 +30,8 @@ function getPhoneNumber(event) {
 // for speed, MAY consider loading the dictionary as page loads rather than after phone number entered
 // MAY add more dictionaries in future - slang, vulgar words, proper names...
 function loadDictionary(phoneNumber) {
-    console.log("in loadDictionary");
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-        console.log("readyState:",this.readyState,"status:",this.status);
         if (this.readyState == 4 && this.status == 200) {
             const dictionary = this.responseText.split(',').sort(); // word list may be unsorted; search efficiency demands sorted list
             const words = splitDictionary(dictionary);
@@ -47,13 +45,14 @@ function loadDictionary(phoneNumber) {
             let sortedList = FULLLIST.size > 0 ? tripleSort() : [];
             let maxResults = 1000; // Make this user-defined?
             document.getElementById("putTextHere").innerHTML += sortedList.length > 0 ? `<br>Your results:<br>` : `<br>We found no results.<br>`;
+            document.getElementById("loader").style.display = "none";
             for (let oneResult of sortedList.slice(0,maxResults)) {
                 document.getElementById("putTextHere").innerHTML += `<nobr class="oneResult">${oneResult}</nobr> `;
             }
         }
     };
     xhttp.open("GET", "words.txt", true);  // BEWARE OF CORS ISSUES
-    console.log("about to send");
+    document.getElementById("loader").style.display = "block";
     xhttp.send();
 }
 
@@ -93,6 +92,7 @@ function findWordMatches(phoneNumber,possibles,words) {
         for (let possible of possibles) {
             for (let pointer = 0; pointer <= shortener; pointer++) {
                 wordLen = possible.length-shortener;
+// !!!!!!!!!! ****************** ###################               NOTE!!!!: LINE BELOW BREAKS IF PHONE NUMBER LONGER THAN 10 DIGITS IS ENTERED...
                 if (sortedFind(possible.substring(pointer, wordLen+pointer), words[wordLen])) {
                     // concatenating pointer to word (instead of creating array) so that Set can be used to eliminate duplicates
                     // also adding index of end of word to be used when building combinations
