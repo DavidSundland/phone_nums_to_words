@@ -7,6 +7,15 @@
     background-color: azure;
 }
 
+.oneResult span {
+    border: 1px black solid;
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+    text-align: center;
+    display: inline-block;
+}
+
 #loader {
     /* animated gif to display when potentially slow functions are running */
     display: none;

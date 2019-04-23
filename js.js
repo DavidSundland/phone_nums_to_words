@@ -43,11 +43,16 @@ function loadDictionary(phoneNumber) {
             let matches = findWordMatches(phoneNumber,possibles,words);
             compileCombinations(matches,phoneNumber);
             let sortedList = FULLLIST.size > 0 ? tripleSort() : [];
-            let maxResults = 1000; // Make this user-defined?
+            let maxResults = 100; // Make this user-defined?
             document.getElementById("putTextHere").innerHTML += sortedList.length > 0 ? `<br>Your results:<br>` : `<br>We found no results.<br>`;
             document.getElementById("loader").style.display = "none";
             for (let oneResult of sortedList.slice(0,maxResults)) {
-                document.getElementById("putTextHere").innerHTML += `<nobr class="oneResult">${oneResult}</nobr> `;
+                let aResult = `<nobr class='oneResult'>`;
+                for (let letter of oneResult) {
+                    aResult += `<span>${letter}</span>`;
+                }
+                aResult += `</nobr> `
+                document.getElementById("putTextHere").innerHTML += aResult;
             }
         }
     };
