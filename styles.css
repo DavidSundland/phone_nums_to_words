@@ -1,13 +1,12 @@
 .oneResult {
-    padding: 3px 15px;
-    line-height: 1.5;
+    line-height: 3;
 }
 
 .oneResult img {
     height: 48px;
-    margin-right: 2px;
+    margin: 4px;
 }
-/*
+/* not needed if images used instead of text
 .oneResult:nth-child(odd) {
     background-color: azure;
 }
