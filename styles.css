@@ -3,6 +3,11 @@
     line-height: 1.5;
 }
 
+.oneResult img {
+    height: 48px;
+    margin-right: 2px;
+}
+/*
 .oneResult:nth-child(odd) {
     background-color: azure;
 }
@@ -15,6 +20,7 @@
     text-align: center;
     display: inline-block;
 }
+*/
 
 #loader {
     /* animated gif to display when potentially slow functions are running */
@@ -24,7 +30,7 @@
     position: absolute;
     margin: 0;
     padding: 0;
-    background: rgba(255, 255, 255, 0.5) url("phone_dial.gif") no-repeat center center fixed;
+    background: rgba(255, 255, 255, 0.5) url("images/phone_dial.gif") no-repeat center center fixed;
     background-size: 300px 300px;
     opacity: .7;
     z-index: 301;

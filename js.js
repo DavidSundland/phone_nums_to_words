@@ -49,7 +49,9 @@ function loadDictionary(phoneNumber) {
             for (let oneResult of sortedList.slice(0,maxResults)) {
                 let aResult = `<nobr class='oneResult'>`;
                 for (let letter of oneResult) {
-                    aResult += `<span>${letter}</span>`;
+//                    aResult += `<span>${letter}</span>`;
+                    letter = letter === "-" ? "dash" : letter;
+                    aResult += `<img src="images/${letter}.jpg">`
                 }
                 aResult += `</nobr> `
                 document.getElementById("putTextHere").innerHTML += aResult;
