@@ -5,7 +5,15 @@
 const FULLLIST = new Set();
 
 function listen() {
+    document.getElementById("letterInput").addEventListener("submit", getText, false);
     document.getElementById("numberInput").addEventListener("submit", getPhoneNumber, false);
+}
+
+function getText(event) {
+    event.preventDefault();
+    let text = document.getElementById("letterInput").getElementsByTagName("input")[0].value;
+    text = text.toLocaleUpperCase().replace(/[^A-Z0-9]/g,'');
+    console.log(text);
 }
 
 function getPhoneNumber(event) {
