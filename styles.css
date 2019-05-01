@@ -5,6 +5,7 @@
 .oneResult img {
     height: 48px;
     margin: 4px;
+    box-shadow: 2px 2px 2px gray;
 }
 /* not needed if images used instead of text
 .oneResult:nth-child(odd) {
