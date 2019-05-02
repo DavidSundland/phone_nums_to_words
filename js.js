@@ -3,6 +3,7 @@
 //Some numbers will have multiple results, others will have none.  Since no letters correspond to the 0 or 1 keys, those numbers can't be converted to letters.
 
 const FULLLIST = new Set();
+const LETTERS = [["0"],["1"],["A","B","C"],["D","E","F"],["G","H","I"],["J","K","L"],["M","N","O"],["P","Q","R","S"],["T","U","V"],["W","X","Y","Z"]];
 
 function listen() {
     document.getElementById("letterInput").addEventListener("submit", getText, false);
@@ -13,7 +14,26 @@ function getText(event) {
     event.preventDefault();
     let text = document.getElementById("letterInput").getElementsByTagName("input")[0].value;
     text = text.toLocaleUpperCase().replace(/[^A-Z0-9]/g,'');
-    console.log(text);
+    let number = textToNum(text);
+    console.log(number);
+}
+
+function textToNum(text) {
+    returnNumber = "";
+    for (let character of text) {
+        if (!isNaN(character)) {
+            returnNumber += character;
+        }
+        else {
+            for (let pointer = 2; pointer < LETTERS.length; pointer++) {
+                if (LETTERS[pointer].indexOf(character) !== -1) {
+                    returnNumber += pointer;
+                    break;
+                }
+            }
+        }
+    }
+    return returnNumber;
 }
 
 function getPhoneNumber(event) {
@@ -85,12 +105,11 @@ function splitDictionary(dictionary) {
 
 
 function createPossibilities(phoneNumber) {
-    let possibles = [""],
-        letters = [["0"],["1"],["A","B","C"],["D","E","F"],["G","H","I"],["J","K","L"],["M","N","O"],["P","Q","R","S"],["T","U","V"],["W","X","Y","Z"]];
+    let possibles = [""];
     for (let digit of phoneNumber) {
         let newPossibilities = [];
         for (let possible of possibles) {
-            for (let onelet of letters[parseInt(digit)]) {
+            for (let onelet of LETTERS[parseInt(digit)]) {
                 newPossibilities.push(possible+onelet);
             }
         }
