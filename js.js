@@ -15,7 +15,7 @@ function getText(event) {
     let text = document.getElementById("letterInput").getElementsByTagName("input")[0].value;
     text = text.toLocaleUpperCase().replace(/[^A-Z0-9]/g,'');
     let number = textToNum(text);
-    console.log(number);
+    document.getElementById("putTextHere").innerHTML = `The phone number associated with the text you entered is: ${number}`;
 }
 
 function textToNum(text) {
@@ -64,8 +64,8 @@ function loadDictionary(phoneNumber) {
             const dictionary = this.responseText.split(',').sort(); // word list may be unsorted; search efficiency demands sorted list
             const words = splitDictionary(dictionary);
             const possibles = createPossibilities(phoneNumber);
-            let threeKeys = phoneNumber.match(/[234568]/g) ? phoneNumber.match(/[234568]/g).length : 1;
-            let fourKeys = phoneNumber.match(/[79]/g) ? phoneNumber.match(/[79]/g).length : 1;
+            let threeKeys = phoneNumber.match(/[234568]/g) ? phoneNumber.match(/[234568]/g).length : 0;
+            let fourKeys = phoneNumber.match(/[79]/g) ? phoneNumber.match(/[79]/g).length : 0;
             let combinations = 3**threeKeys*4**fourKeys;
             document.getElementById("putTextHere").innerHTML += `<br>Checking ${combinations} possible combinations...<br>`;
             let matches = findWordMatches(phoneNumber,possibles,words);
