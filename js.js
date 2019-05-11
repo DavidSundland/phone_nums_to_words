@@ -43,6 +43,10 @@ function getPhoneNumber(event) {
     if (phoneNumber.length > 0) {
         document.getElementById("numberInput").getElementsByTagName("input")[0].placeholder = phoneNumber;
         document.getElementById("putTextHere").innerHTML = `The numerals you entered were: ${phoneNumber}`;
+        let threeKeys = phoneNumber.match(/[234568]/g) ? phoneNumber.match(/[234568]/g).length : 0;
+        let fourKeys = phoneNumber.match(/[79]/g) ? phoneNumber.match(/[79]/g).length : 0;
+        let combinations = 3**threeKeys*4**fourKeys;
+        document.getElementById("putTextHere").innerHTML += `<br>Checking ${combinations} possible combinations...<br>`;
 
 //        ADD CONTROL HERE IN FUTURE TO CONFIRM GOING AHEAD WITH CALCULATIONS FOR NUMERALS ENTERED.
 //        ONCE CALCULATIONS BEGIN, LOCK SUBMIT BUTTON UNTIL CALCS COMPLETE?
@@ -64,10 +68,6 @@ function loadDictionary(phoneNumber) {
             const dictionary = this.responseText.split(',').sort(); // word list may be unsorted; search efficiency demands sorted list
             const words = splitDictionary(dictionary);
             const possibles = createPossibilities(phoneNumber);
-            let threeKeys = phoneNumber.match(/[234568]/g) ? phoneNumber.match(/[234568]/g).length : 0;
-            let fourKeys = phoneNumber.match(/[79]/g) ? phoneNumber.match(/[79]/g).length : 0;
-            let combinations = 3**threeKeys*4**fourKeys;
-            document.getElementById("putTextHere").innerHTML += `<br>Checking ${combinations} possible combinations...<br>`;
             let matches = findWordMatches(phoneNumber,possibles,words);
             compileCombinations(matches,phoneNumber);
             let sortedList = FULLLIST.size > 0 ? tripleSort() : [];
@@ -163,6 +163,7 @@ function sortedFind(word, sortedList) {
 }
 
 function compileCombinations(matches,phoneNumber) {
+    FULLLIST.clear(); // empty the set in case more than one number has been entered
     for (let match of matches) {
         FULLLIST.add((`${phoneNumber.substring(0,match[0])}-${match[1]}-${phoneNumber.substring(match[2]+1)}`).replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-'));
         addToWord(match, matches, phoneNumber);
