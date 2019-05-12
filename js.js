@@ -96,7 +96,7 @@ function splitDictionary(dictionary) {
     //    seed list of words with empty array for 0, letters of alphabet for 1, and empty arrays for 2 through 10
     const words = [[],['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],[],[],[],[],[],[],[],[],[]];
     for (let word of dictionary) {
-        if (word.length > 1 && word.length < 11) { // for now, only test against words of 10 or fewer letters
+        if (word.length < 11) { // for now, only test against words of 10 or fewer letters
             words[word.length].push(word.toUpperCase());
         }
     }
@@ -122,14 +122,21 @@ function createPossibilities(phoneNumber) {
 function findWordMatches(phoneNumber,possibles,words) {
 //    step through each possible combination, starting with longest words
     let matches = new Set();
+    for (let possible of possibles) {
+        for (let x=0; x<possible.length; x++) {
+            if (possible[x] === "A" || possible[x] === "I") {
+                // concatenating start and end index to word (instead of creating array) so that Set can be used to eliminate duplicates
+                matches.add(x + possible[x] + x);
+            }
+        }
+    }
     for (let shortener = 0; shortener < phoneNumber.length - 1; shortener++) {
         for (let possible of possibles) {
             for (let pointer = 0; pointer <= shortener; pointer++) {
                 wordLen = possible.length-shortener;
 // !!!!!!!!!! ****************** ###################               NOTE!!!!: LINE BELOW BREAKS IF PHONE NUMBER LONGER THAN 10 DIGITS IS ENTERED...
                 if (sortedFind(possible.substring(pointer, wordLen+pointer), words[wordLen])) {
-                    // concatenating pointer to word (instead of creating array) so that Set can be used to eliminate duplicates
-                    // also adding index of end of word to be used when building combinations
+                    // concatenating start and end index to word (instead of creating array) so that Set can be used to eliminate duplicates
                     matches.add(pointer + possible.substring(pointer, wordLen+pointer) + (wordLen + pointer - 1));
                 }
             }
@@ -171,7 +178,7 @@ function compileCombinations(matches,phoneNumber) {
 }
 
 function addToWord(item, matches, phoneNumber) {
-    if (item[2] <= phoneNumber.length - 2) {
+    if (item[2] <= phoneNumber.length - 1) {
         for (let match of matches) {
             if ((match[0] > item[2]) && (match[2] < phoneNumber.length)) {
                 FULLLIST.add((`${phoneNumber.substring(0,item[0])}-${item[1]}-${phoneNumber.substring(item[2]+1,match[0])}-${match[1]}-${phoneNumber.substring(match[2]+1)}`).replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-'));
@@ -186,9 +193,11 @@ function addToWord(item, matches, phoneNumber) {
 // ??? REPLACING ALL 2s WITH A's AND ALL 4s WITH I's; DO I WANT TO DO THAT?  ADD RATHER THAN REPLACE?
 function tripleSort() {
     let finalList = [...FULLLIST];
-    let returnSort = [finalList.pop().replace(/2/g,"-A-").replace(/4/g,"-I-").replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-')];
+//    let returnSort = [finalList.pop().replace(/2/g,"-A-").replace(/4/g,"-I-").replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-')];
+    let returnSort = [finalList.pop().replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-')];
     for (let item of finalList) {
-        item = item.replace(/2/g,"-A-").replace(/4/g,"-I-").replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-');
+//        item = item.replace(/2/g,"-A-").replace(/4/g,"-I-").replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-');
+        item = item.replace(/^\-+|\-+$/g,'').replace(/\-\-/g,'-');
         let dashLength = item.match(/\-/g) ? item.match(/\-/g).length : 0,
             letterLength = item.match(/[A-Z]/g).length,
             found = false;
