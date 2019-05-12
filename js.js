@@ -43,9 +43,9 @@ function getPhoneNumber(event) {
     if (phoneNumber.length > 0) {
         document.getElementById("numberInput").getElementsByTagName("input")[0].placeholder = phoneNumber;
         document.getElementById("putTextHere").innerHTML = `The numerals you entered were: ${phoneNumber}`;
-        let threeKeys = phoneNumber.match(/[234568]/g) ? phoneNumber.match(/[234568]/g).length : 0;
-        let fourKeys = phoneNumber.match(/[79]/g) ? phoneNumber.match(/[79]/g).length : 0;
-        let combinations = 3**threeKeys*4**fourKeys;
+        let fourKeys = phoneNumber.match(/[234568]/g) ? phoneNumber.match(/[234568]/g).length : 0; // 3 letters + number
+        let fiveKeys = phoneNumber.match(/[79]/g) ? phoneNumber.match(/[79]/g).length : 0;  // 4 letters + number
+        let combinations = 4**fourKeys*5**fiveKeys;
         document.getElementById("putTextHere").innerHTML += `<br>Checking ${combinations} possible combinations...<br>`;
 
 //        ADD CONTROL HERE IN FUTURE TO CONFIRM GOING AHEAD WITH CALCULATIONS FOR NUMERALS ENTERED.
