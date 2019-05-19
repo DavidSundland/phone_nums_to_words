@@ -97,10 +97,13 @@ function loadDictionary(phoneNumber) {
 
 
 function splitDictionary(dictionary) {
-    //    seed list of words with empty array for 0, letters of alphabet for 1, and empty arrays for 2 through 10
-    const words = [[],['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],[],[],[],[],[],[],[],[],[]];
+    //    seed list of words with empty array for 0 and letters of alphabet for 1
+    const words = [[],['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']];
     for (let word of dictionary) {
-        if (word.length < 11) { // for now, only test against words of 10 or fewer letters
+        if (word.length > words.length || !words[word.length]) {
+            words[word.length] = [word.toUpperCase()];
+        }
+        else {
             words[word.length].push(word.toUpperCase());
         }
     }
@@ -138,7 +141,9 @@ function findWordMatches(phoneNumber,possibles,words) {
         for (let possible of possibles) {
             for (let pointer = 0; pointer <= shortener; pointer++) {
                 wordLen = possible.length-shortener;
-// !!!!!!!!!! ****************** ###################               NOTE!!!!: LINE BELOW BREAKS IF PHONE NUMBER LONGER THAN 10 DIGITS IS ENTERED...
+                if (wordLen > words.length) {  // note - test should be added sooner?
+                    continue;
+                }
                 if (sortedFind(possible.substring(pointer, wordLen+pointer), words[wordLen])) {
                     // concatenating start and end index to word (instead of creating array) so that Set can be used to eliminate duplicates
                     matches.add(pointer + possible.substring(pointer, wordLen+pointer) + (wordLen + pointer - 1));
