@@ -64,7 +64,7 @@ function getPhoneNumber(event) {
 function loadDictionary(phoneNumber) {
     let xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
+        if (this.readyState === 4 && this.status === 200) {
             const dictionary = this.responseText.split(',').sort(); // word list may be unsorted; search efficiency demands sorted list
             const words = splitDictionary(dictionary);
             const possibles = createPossibilities(phoneNumber);
@@ -84,6 +84,10 @@ function loadDictionary(phoneNumber) {
                 aResult += `</nobr> `
                 document.getElementById("putTextHere").innerHTML += aResult;
             }
+        }
+        else if (this.readyState === 4 && (this.status < 200 || this.status > 299)) {
+            console.log("xhttp status code: ",this.status);
+            alert("Oh, no!  Something went terribly, terribly wrong.")
         }
     };
     xhttp.open("GET", "words.txt", true);  // BEWARE OF CORS ISSUES
